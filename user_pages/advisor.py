@@ -528,3 +528,139 @@ st.markdown("""
     <p>The final recommendation balances these two approaches to create a portfolio that matches your unique financial situation.</p>
 </div>
 """, unsafe_allow_html=True)
+
+
+def show_advisor():
+    st.markdown("""
+    <div class="profile-header">
+        <h1 style="font-size:55px; color:white; text-align:center;">💰 Investment Portfolio Recommender</h1>
+        <p style="text-align:center;">Our <span class="highlight">hybrid recommendation system</span> combines traditional finance rules with machine learning 
+        to create a balanced portfolio allocation tailored to your specific needs.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("")
+    st.markdown("")
+    st.markdown("")
+
+    col1, col2 = st.columns([1, 1], gap="large")
+
+
+    with col1:
+        st.markdown("### Your Investment Profile")
+
+        st.markdown("Tell us about your financial preferences to get personalized recommendations! Adjust these sliders to reflect your risk appetite, time horizon, cash needs, and tax preferences. Your selections will shape a portfolio tailored to your goals—from conservative to growth-focused. The more accurate your inputs, the better your results.")
+        st.markdown("(All recommendations update instantly as you adjust the settings.)")
+        st.markdown("")
+
+        st.markdown('<div class="slider-container">', unsafe_allow_html=True)
+        risk_tolerance = st.slider(
+            "**Risk Tolerance** (1 = Conservative, 10 = Aggressive)",
+            min_value=1.0, max_value=10.0, value=5.0, step=0.5,
+            key="risk_slider"
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown("")
+        st.markdown('<div class="slider-container">', unsafe_allow_html=True)
+        investment_horizon = st.slider(
+            "**Investment Horizon** (years)",
+            min_value=1, max_value=40, value=20,
+            key="horizon_slider"
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown("")
+        st.markdown('<div class="slider-container">', unsafe_allow_html=True)
+        liquidity = st.slider(
+            "**Liquidity Need** (0 = No immediate need, 1 = High need)",
+            min_value=0.0, max_value=1.0, value=0.3, step=0.05,
+            key="liquidity_slider"
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown("")
+        st.markdown('<div class="slider-container">', unsafe_allow_html=True)
+        tax_factor = st.slider(
+            "**Tax Sensitivity** (0 = Not sensitive, 1 = Highly sensitive)",
+            min_value=0.0, max_value=1.0, value=0.4, step=0.05,
+            key="tax_slider"
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # rec = hybrid_recommendation(risk_tolerance, investment_horizon, liquidity, tax_factor)
+        
+        # st.markdown("### Recommended Allocation")
+        
+        # # Metrics row
+        # cols = st.columns(3)
+        # with cols[0]:
+        #     # st.markdown('<div class="allocation-card">', unsafe_allow_html=True)
+        #     st.markdown('<div class="metric-value">{:.1f}%</div>'.format(rec['equity']), unsafe_allow_html=True)
+        #     st.markdown('<div class="metric-label">Equity</div>', unsafe_allow_html=True)
+        #     st.markdown('</div>', unsafe_allow_html=True)
+        
+        # with cols[1]:
+        #     # st.markdown('<div class="allocation-card">', unsafe_allow_html=True)
+        #     st.markdown('<div class="metric-value">{:.1f}%</div>'.format(rec['bonds']), unsafe_allow_html=True)
+        #     st.markdown('<div class="metric-label">Bonds</div>', unsafe_allow_html=True)
+        #     st.markdown('</div>', unsafe_allow_html=True)
+        
+        # with cols[2]:
+        #     # st.markdown('<div class="allocation-card">', unsafe_allow_html=True)
+        #     st.markdown('<div class="metric-value">{:.1f}%</div>'.format(rec['cash']), unsafe_allow_html=True)
+        #     st.markdown('<div class="metric-label">Cash</div>', unsafe_allow_html=True)
+        #     st.markdown('</div>', unsafe_allow_html=True)
+
+
+    with col2:
+        # Calculate recommendations
+        rec = hybrid_recommendation(risk_tolerance, investment_horizon, liquidity, tax_factor)
+        
+        st.markdown("### Recommended Allocation")
+        
+        # Metrics row
+        cols = st.columns(3)
+        with cols[0]:
+            # st.markdown('<div class="allocation-card">', unsafe_allow_html=True)
+            st.markdown('<div class="metric-value">{:.1f}%</div>'.format(rec['equity']), unsafe_allow_html=True)
+            st.markdown('<div class="metric-label">Equity</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with cols[1]:
+            # st.markdown('<div class="allocation-card">', unsafe_allow_html=True)
+            st.markdown('<div class="metric-value">{:.1f}%</div>'.format(rec['bonds']), unsafe_allow_html=True)
+            st.markdown('<div class="metric-label">Bonds</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with cols[2]:
+            # st.markdown('<div class="allocation-card">', unsafe_allow_html=True)
+            st.markdown('<div class="metric-value">{:.1f}%</div>'.format(rec['cash']), unsafe_allow_html=True)
+            st.markdown('<div class="metric-label">Cash</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        # Bar chart
+        st.markdown("#### Allocation Breakdown")
+        bar_chart = create_allocation_chart(rec)
+        st.altair_chart(bar_chart, use_container_width=True)
+        
+        # Pie chart
+        st.markdown("#### Portfolio Distribution")
+        pie_chart = create_allocation_pie(rec)
+        st.altair_chart(pie_chart, use_container_width=True)
+
+    # Explanation section
+    st.markdown("")
+    st.markdown("")
+    st.markdown("")
+    st.markdown("""
+    <div class="card">
+        <h4>How This Works</h4>
+        <p>Our hybrid recommendation system combines:</p>
+        <ul>
+            <li><strong>Rule-based allocation</strong>: Traditional financial planning principles based on your risk tolerance and time horizon</li>
+            <li><strong>Machine learning adjustment</strong>: Predictive modeling trained on historical market data and investor behavior</li>
+        </ul>
+        <p>The final recommendation balances these two approaches to create a portfolio that matches your unique financial situation.</p>
+    </div>
+    """, unsafe_allow_html=True)

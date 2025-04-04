@@ -260,3 +260,122 @@ if should_search:
 
 elif not st.session_state.current_term:
     st.info("Enter a financial term above to get started")
+
+
+def show_dictionary():
+    st.markdown("""
+    <div>
+        <h1 style="font-size:60px; color:white; text-align:center;">📚 Finance Dictionary</h1>
+        <p style="text-align:center;">Your personal guide to financial terminology - understand complex concepts in simple terms!</p>
+        <p>Search any financial term to get:</p>
+        <ul>
+            <li><span class="highlight">Simple explanations</span> anyone can understand</li>
+            <li><span class="highlight">Formal definitions</span> for precise understanding</li>
+            <li><span class="highlight">Related terms</span> to expand your knowledge</li>
+        </ul>
+        <p>Perfect for students, beginners, and professionals looking for quick refreshers.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # st.title("📚 Finance Dictionary")
+    # st.markdown("""
+    # <div>
+    #     <Enter>Your personal guide to financial terminology - understand complex concepts in simple terms!</p>
+    #     <p>Search any financial term to get:</p>
+    #     <ul>
+    #         <li><span class="highlight">Simple explanations</span> anyone can understand</li>
+    #         <li><span class="highlight">Formal definitions</span> for precise understanding</li>
+    #         <li><span class="highlight">Related terms</span> to expand your knowledge</li>
+    #     </ul>
+    #     <p>Perfect for students, beginners, and professionals looking for quick refreshers.</p>
+    # </div>
+    # """, unsafe_allow_html=True)
+
+    st.markdown("")
+    st.markdown("")
+    st.markdown("")
+
+    # Initialize session state for term if not exists
+    if 'current_term' not in st.session_state:
+        st.session_state.current_term = ''
+
+    # Unified search handling
+    def handle_search(term):
+        st.session_state.current_term = term
+        # Force rerun to trigger search
+        # st.experimental_rerun()
+
+    # Search Input
+    col_input, col_button = st.columns([4, 1])
+    with col_input:
+        user_input = st.text_input(
+            "Enter a finance term:",
+            key="term_input",
+            placeholder="e.g., Compound Interest, ETF, Liquidity...",
+            value=st.session_state.current_term,
+            label_visibility="collapsed"
+        )
+    with col_button:
+        # st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("🔍 Search", use_container_width=True, type="primary"):
+            handle_search(user_input)
+
+    # Check if we should perform a search
+    should_search = st.session_state.current_term and (
+        'selected_term' not in st.session_state or 
+        st.session_state.selected_term != st.session_state.current_term
+    )
+
+    if should_search:
+        term = st.session_state.current_term.strip().lower()
+        st.session_state.selected_term = term  # Mark as searched
+        
+        finance_dict = load_finance_dictionary()
+        
+        # Display results
+        # st.markdown(f"### Results for: {term.title()}")
+        st.markdown("")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            with st.container(border=True):
+                st.markdown("#### 📘 Formal Definition")
+                if term in finance_dict:
+                    proper_def = finance_dict[term]
+                else:
+                    proper_def = generate_proper_explanation(term)
+                    finance_dict[term] = proper_def
+                    with open("finance_terms.json", "w", encoding="utf-8") as file:
+                        json.dump(finance_dict, file, indent=4, ensure_ascii=False)
+                st.markdown(proper_def)
+            
+        with col2:
+            with st.container(border=True):
+                st.markdown("#### 🔄 Simple Explanation")
+                simple_expl = generate_simple_explanation(term)
+                st.markdown(simple_expl)
+        
+        # Related terms section
+        # st.markdown("---")
+        st.markdown("")
+        st.markdown("")
+        st.markdown("#### 🔗 Related Terms")
+        st.markdown("Explore these related financial concepts:")
+        
+        related_terms = generate_related_terms(term)
+        cols = st.columns(4)
+        
+        for i, rt in enumerate(related_terms):
+            with cols[i]:
+                if st.button(
+                    rt,
+                    key=f"related_{i}_{term}",  # Unique key per term
+                    help=f"Click to look up '{rt}'",
+                    use_container_width=True,
+                    on_click=handle_search,
+                    args=(rt,)
+                ):
+                    pass  # Handled by on_click
+
+    elif not st.session_state.current_term:
+        st.info("Enter a financial term above to get started")

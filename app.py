@@ -274,7 +274,8 @@ from auth_functions import *
 # Import your page functions or ensure they are discoverable
 # from user_pages.dashboard import show_dashboard # Example import
 # from user_options.profile_entry import main_profile # Example import
-
+import user_pages as pg
+from streamlit_navigation_bar import st_navbar
 # --- Initialization ---
 initialize_firebase_once() # Ensure Firebase is initialized only once
 
@@ -487,6 +488,8 @@ def show_introduction_page():
     st.markdown("</div>", unsafe_allow_html=True)
 
 
+pages_logged_out_navbar = [""]
+
 # --- Main App Logic --- # Get auth and db objects
 
 if 'user_info' in st.session_state:
@@ -546,6 +549,26 @@ if 'user_info' in st.session_state:
 
     # Run the selected page function
     nav_selection_logged_in.run()
+    '''
+    else:
+        # --- LOGGED-OUT VIEW ---
+        with st.sidebar:
+            # Use an emoji or potentially load a small logo image
+            st.markdown("### 💰 FinFriend")
+            # st.sidebar.title("FinFriend") # Alternative styling
+            st.sidebar.divider()
+
+            pages_logged_out = [
+                st.Page(show_introduction_page, title="Introduction", icon="👋", default=True),
+                st.Page("user_options/login_pg.py", title="Log In", icon="🔑"),
+                st.Page("user_options/signup_pg.py", title="Sign Up", icon="📝"),
+                # st.Page("user_options/forgot_password_pg.py", title="Reset Password", icon="❓"), # Optional
+            ]
+            nav_selection_logged_out = st.navigation(pages_logged_out)
+
+        # Run the selected page function (which will be show_introduction_page by default)
+        nav_selection_logged_out.run()
+    '''
 
 else:
     # --- LOGGED-OUT VIEW ---
@@ -554,14 +577,43 @@ else:
         st.markdown("### 💰 FinFriend")
         # st.sidebar.title("FinFriend") # Alternative styling
         st.sidebar.divider()
-
-        pages_logged_out = [
+        logo_path = "WhatsApp Image 2025-04-04 at 00.14.38_9057ec37.jpg"
+        urls = {'GitHub': 'https://github.com/HarshdeepJ/gdsc-prachi'}
+        pages_logged_out_main = [
             st.Page(show_introduction_page, title="Introduction", icon="👋", default=True),
             st.Page("user_options/login_pg.py", title="Log In", icon="🔑"),
             st.Page("user_options/signup_pg.py", title="Sign Up", icon="📝"),
             # st.Page("user_options/forgot_password_pg.py", title="Reset Password", icon="❓"), # Optional
         ]
-        nav_selection_logged_out = st.navigation(pages_logged_out)
-
+        pages_logged_out = ["home","advisor", "fraud_detector","dictionary"]
+        nav_selection_logged_out = st.navigation(pages_logged_out_main)
+        styles_logged_out = {
+            "nav": {
+                "background-color": "lightgrey", # Example: different color for logged-out
+                "justify-content": "left", # Or "center", "right"
+            },
+            "img": {
+                "padding-right": "10px",
+            },
+            "span": {
+                "color": "black", # Text color for inactive items
+                "padding": "10px",
+            },
+            "active": {
+                "background-color": "white",
+                "color": "var(--text-color)", # Use theme text color
+                "font-weight": "bold",       # Make active item bold
+                "padding": "10px",
+            }
+        }
+        options = {
+            "show_menu": False,
+            "show_sidebar": True,
+        }
+        page = st_navbar(pages_logged_out, styles = styles_logged_out, options = options, logo_path = logo_path, urls = urls)
+        functions = {"home":show_introduction_page(), "advisor": pg.show_advisor, "fraud_detector": pg.fraud_detector, "dictionary":pg.show_dictionary}
+        go_to = functions.get(page)
+        if go_to:
+            go_to()
     # Run the selected page function (which will be show_introduction_page by default)
     nav_selection_logged_out.run()

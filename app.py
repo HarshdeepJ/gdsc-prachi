@@ -318,11 +318,13 @@ st.markdown("""
             margin-bottom: 1rem;
             color: #0e1117; /* Streamlit's dark text color */
         }
+        
         .hero-subtitle {
-            font-size: 1.4rem; /* Slightly larger subtitle */
-            color: #555; /* Muted color */
-            margin-bottom: 2.5rem; /* More space before CTA */
-            max-width: 650px; /* Limit width */
+            font-size: 1.4rem; /* Larger, bolder title */
+            font-weight: 500;
+            line-height: 0.9;
+            margin-bottom: 1rem;
+            color: #555; /* Streamlit's dark text color */
         }
         .hero-cta-text {
             font-size: 1.1rem;

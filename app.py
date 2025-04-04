@@ -323,8 +323,6 @@ st.markdown("""
             color: #555; /* Muted color */
             margin-bottom: 2.5rem; /* More space before CTA */
             max-width: 650px; /* Limit width */
-            margin-left: auto;
-            margin-right: auto;
         }
         .hero-cta-text {
             font-size: 1.1rem;
